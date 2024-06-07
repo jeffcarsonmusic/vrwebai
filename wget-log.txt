@@ -1,0 +1,40 @@
+--2024-06-07 11:25:02--  https://dreamers.church/beliefs
+Resolving dreamers.church (dreamers.church)... 35.164.64.246
+Connecting to dreamers.church (dreamers.church)|35.164.64.246|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Cookie coming from dreamers.church attempted to set domain to snappages.site
+Length: unspecified [text/html]
+Saving to: ‘sitepages/beliefs.tmp’
+
+     0K .......... .......... .......... ...                    487K=0.07s
+
+2024-06-07 11:25:02 (487 KB/s) - ‘sitepages/beliefs.tmp’ saved [34112]
+
+Loading robots.txt; please ignore errors.
+--2024-06-07 11:25:02--  https://dreamers.church/robots.txt
+Reusing existing connection to dreamers.church:443.
+HTTP request sent, awaiting response... 200 OK
+Length: unspecified [text/plain]
+Saving to: ‘sitepages/robots.txt.1.tmp’
+
+     0K                                                        20.0M=0s
+
+2024-06-07 11:25:03 (20.0 MB/s) - ‘sitepages/robots.txt.1.tmp’ saved [105]
+
+Removing sitepages/robots.txt.1.tmp.
+--2024-06-07 11:25:03--  https://dreamers.church/
+Reusing existing connection to dreamers.church:443.
+HTTP request sent, awaiting response... 200 OK
+Cookie coming from dreamers.church attempted to set domain to snappages.site
+Length: unspecified [text/html]
+Saving to: ‘sitepages/index.html.1.tmp.1’
+
+     0K .......... .......... .......... .......... ...         322K=0.1s
+
+2024-06-07 11:25:03 (322 KB/s) - ‘sitepages/index.html.1.tmp.1’ saved [44370]
+
+Removing sitepages/index.html.1.tmp.1 since it should be rejected.
+
+FINISHED --2024-06-07 11:25:03--
+Total wall clock time: 1.6s
+Downloaded: 3 files, 77K in 0.2s (378 KB/s)

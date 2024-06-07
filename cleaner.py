@@ -1,28 +1,79 @@
-# open vscode through anaconda
-## pip install bs4
-#  wget -r -np -nd -A.html,.txt,.tmp -P websites https://your-website # download the website
-# install beautifulsoup4
-# configure path to the directory where the files are stored
-# run the script
-
-
-
 import os
 from bs4 import BeautifulSoup
 import chardet
 import shutil
+import httplib2
+import subprocess
+from bs4 import BeautifulSoup, SoupStrainer
 
-def get_unique_filename(output_file_path):
+url = "https://dreamers.church"
+# Set up the http object and make a request to the URL
+http = httplib2.Http()
+response, content = http.request(url)
+
+# Parse the response and extract all first level linkss
+links = []
+for link in BeautifulSoup(content, parse_only=SoupStrainer('a'), features="html.parser"):
+    if link.has_attr('href') and link['href'].startswith('/'):
+        links.append(link['href'])
+
+# Remove duplicates from list
+unique_links = list(set(links))
+
+for link in unique_links:
+    print(link)
+    
+    # Concatenate the Church URL with the link from the list
+    church_link = f'{url}{link}'
+    
+    # Check if wget is available
+    wget_path = shutil.which("wget")
+    if wget_path is None:
+        print("wget is not installed or not in your PATH")
+    else:
+        # Define the wget command as a list of strings
+        command = [
+            wget_path,  # Use the full path to wget
+            "-r",
+            "-l", "2",
+            "-nd",
+            "-A", ".html,.txt,.tmp",
+            "-P", "sitepages",
+            church_link
+        ]
+
+        try:
+            # Run the command
+            result = subprocess.run(command, capture_output=True, text=True)
+            # Check if the command was successful
+            if result.returncode == 0:
+                print("Command executed successfully")
+                print(result.stdout)  # Output of the command
+            else:
+                print("Command failed with return code:", result.returncode)
+                print(result.stderr)  # Error output of the command
+        except FileNotFoundError as e:
+            print(f"Command not found: {e}")
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+    print(f"Retrieving {church_link}")
+
+# Function to get a unique filename if the file already exists
+def get_unique_filename(file_path):
+    base, ext = os.path.splitext(file_path)
     counter = 1
-    original_output_file_path = output_file_path
-    while os.path.exists(output_file_path):
-        output_file_path = original_output_file_path.replace(".html", f"_{counter}.html")
+    while os.path.exists(file_path):
+        file_path = f"{base}_{counter}{ext}"
         counter += 1
-    return output_file_path
+    return file_path
 
-# Define the directory path
-dir_path = "websites"
-output_dir = "websites"
+# Directory path to walk through
+dir_path = 'sitepages'
+output_dir = 'sitepages'  # Directory to save the parsed HTML files
+
+# Create output directory if it doesn't exist
+os.makedirs(output_dir, exist_ok=True)
 
 # Loop through all subdirectories and files in the directory
 for root, dirs, files in os.walk(dir_path, topdown=False):
@@ -42,24 +93,36 @@ for root, dirs, files in os.walk(dir_path, topdown=False):
                 with open(file_path, 'r', encoding=encoding) as file:
                     file_content = file.read()
 
-                # Create a Beautiful Soup object
-                soup = BeautifulSoup(file_content, features="lxml")
 
-                # Construct the output file path with .html extension
-                output_file_path = os.path.join(output_dir, os.path.basename(filename).split(".")[0] + ".html")
+                # Create a BeautifulSoup object by opening the file directly
+                with open(file_path, 'r', encoding=encoding) as file:
+                    soup = BeautifulSoup(file, features="lxml")
+                    doc_text = soup.get_text('\n')
+
+
+                # Construct the output file path with .txt extension
+                output_file_path = os.path.join(output_dir, os.path.basename(filename).split(".")[0] + ".txt")
 
                 # Get a unique file name if the file already exists
                 output_file_path = get_unique_filename(output_file_path)
 
-                # Save the Beautiful Soup object to a file in UTF-8
+                # Save the BeautifulSoup object to a file in UTF-8
                 with open(output_file_path, 'w', encoding='utf-8') as file:
-                    file.write(str(soup))
+                    #remove empty lines
+                    cleaned_lines = os.linesep.join([s for s in doc_text.splitlines() if s])
+                    
+                    file.write(str(cleaned_lines) + '\n')
+                    
 
                 # Delete the original file
                 os.remove(file_path)
 
             except UnicodeDecodeError:
                 print(f"Error decoding file: {file_path}")
+            except Exception as e:
+                print(f"An error occurred while processing file {file_path}: {e}")
+
+    print("Processing completed.")
 
     # Delete the original directories
     for directory in dirs:
