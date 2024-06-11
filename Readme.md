@@ -1,4 +1,4 @@
-# Website Scraper, And PDF Chunker/Vectorizer for Pinecone DB
+# RAG Chatbot App Components for Suggested Response
 
 This Python repository contains a set of scripts that allow you to scrape a website, clean the data, organize it, chunk it, and then vectorize it. The resulting vectors can be used for a variety of machine learning tasks, such as similarity search or clustering.
 
@@ -45,19 +45,19 @@ In data_loader folder
 
 ## Usage
 
-Step 1 run /data_loader/run-locally.sh and follow prompts
+### Step 1 run /data_loader/run-locally.sh and follow prompts
 Pre-requisites:
 * URL=<the URL to rip>
-### INDEX_NAME=<Pincone index name (must be existing)>
-### PC_API_KEY=<Pinecone API Key (created when pinecone project is created)>
-### CHUNK_SIZE=<data chunk size (choose 400 if uncertain)>
-### CHUNK_OVERLAP=<chunk ovelap size (choose 40 if uncertain)>
+* INDEX_NAME=<Pincone index name (must be existing)>
+* PC_API_KEY=<Pinecone API Key (created when pinecone project is created)>
+* CHUNK_SIZE=<data chunk size (choose 400 if uncertain)>
+* CHUNK_OVERLAP=<chunk ovelap size (choose 40 if uncertain)>
 
 This will run the python files in this order
 get_website - Scrap website and extract only text
 chunk_data - chunk data and prep for vector db
 vectorize_upsert - Vectorize and loads vectors into pinecone vector db
 
-Step 2
+### Step 2
 Now we simply run rag_call.py and update line 13 with the question we want to pass the RAG call. 
-### Pre-requisites = AWS Keys configured with Bedrock access
+* Pre-requisites = AWS Keys configured with Bedrock access
