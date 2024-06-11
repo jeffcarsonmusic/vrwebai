@@ -45,9 +45,11 @@ In data_loader folder
 
 ## Usage
 
-### Step 1 run /data_loader/run-locally.sh and follow prompts
+### Step 1
+run /data_loader/run-locally.sh and follow prompts
+
 Pre-requisites:
-* URL=<the URL to rip>
+* URL=<The URL to scrape>
 * INDEX_NAME=<Pincone index name (must be existing)>
 * PC_API_KEY=<Pinecone API Key (created when pinecone project is created)>
 * CHUNK_SIZE=<data chunk size (choose 400 if uncertain)>
