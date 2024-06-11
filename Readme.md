@@ -49,11 +49,11 @@ In data_loader folder
 run /data_loader/run-locally.sh and follow prompts
 
 Pre-requisites:
-* URL= The URL to scrape
-* INDEX_NAME= Pincone index name (must be existing)
-* PC_API_KEY= Pinecone API Key (created when pinecone project is created)
-* CHUNK_SIZE= data chunk size (choose 400 if uncertain)
-* CHUNK_OVERLAP= chunk ovelap size (choose 40 if uncertain)
+* URL = The URL to scrape
+* INDEX_NAME = Pincone index name (must be existing)
+* PC_API_KEY = Pinecone API Key (created when pinecone project is created)
+* CHUNK_SIZE = data chunk size (choose 400 if uncertain)
+* CHUNK_OVERLAP = chunk ovelap size (choose 40 if uncertain)
 
 This will run the python files in this order
 get_website - Scrap website and extract only text
