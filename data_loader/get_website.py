@@ -6,7 +6,9 @@ import httplib2
 import subprocess
 from bs4 import BeautifulSoup, SoupStrainer
 
-url = "https://dreamers.church"
+# URL to scrape
+url = os.getenv('URL')
+
 # Set up the http object and make a request to the URL
 http = httplib2.Http()
 response, content = http.request(url)

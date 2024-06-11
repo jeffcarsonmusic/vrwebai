@@ -6,50 +6,58 @@ echo "#######################################################"
 echo " "
 
 # Get the website to scrape from the user
-read -p "What website would you like to scrape?: " url
-while [ -z "$url" ]; do
+read -p "What website would you like to scrape?: " URL
+while [ -z "$URL" ]; do
     echo "Website cannot be empty. Please provide a value."
-    read -p "What website would you like to scrape?: " url
+    read -p "What website would you like to scrape?: " URL
 done
 echo " "
 
 # Get the Pinecone index from the user
-read -p "What Pinecone index to upsert the vectors to? " pc_index
-while [ -z "$pc_index" ]; do
+read -p "What Pinecone index to upsert the vectors to? " INDEX_NAME
+while [ -z "$INDEX_NAME" ]; do
     echo "Pinecone index cannot be empty. Please provide a value."
-    read -p "What Pinecone index to upsert the vectors to? " pc_index
+    read -p "What Pinecone index to upsert the vectors to? " INDEX_NAME
 done
-touch .env
-# Save the Pinecone index to the .env file
-echo INDEX_NAME=$pc_index >> .env
 echo " "
 
 # Get the Pinecone API key from the user
-read -p "What is the Pinecone API key? " pc_api_key
-while [ -z "$pc_api_key" ]; do
+read -p "What is the Pinecone API key? " PC_API_KEY
+while [ -z "$PC_API_KEY" ]; do
     echo "Please enter your Pinecone API Key."
-    read -p "What is the Pinecone API key? " pc_api_key
+    read -p "What is the Pinecone API key? " PC_API_KEY
 done
-
-# Save the Pinecone API key to the .env file
-echo PINECONE_API_KEY=$pc_api_key >> .env
 echo " "
 
 # Get chunk size input from the user
-read -p "What chunk size would you like to use? (enter 1000 if uncertain) " chunk_size
-while [ -z "$chunk_size" ]; do
+read -p "What chunk size would you like to use? (enter 1000 if uncertain) " CHUNK_SIZE
+while [ -z "$CHUNK_SIZE" ]; do
     echo "Please enter a chunk size."
-    read -p "What chunk size would you like to use? (enter 1000 if uncertain) " chunk_size
+    read -p "What chunk size would you like to use? (enter 1000 if uncertain) " CHUNK_SIZE
 done
 echo " "
 
 # Get chunk overlap input from the user
-read -p "What chunk overlap would you like to use? (enter 100 if uncertain) " chunk_overlap
-while [ -z "$chunk_overlap" ]; do
+read -p "What chunk overlap would you like to use? (enter 100 if uncertain) " CHUNK_OVERLAP
+while [ -z "$CHUNK_OVERLAP" ]; do
     echo "Please enter a chunk overlap."
-    read -p "What chunk overlap would you like to use? (enter 100 if uncertain) " chunk_overlap
+    read -p "What chunk overlap would you like to use? (enter 100 if uncertain) " CHUNK_OVERLAP
 done
 echo " "
+
+# Create a .env file to store environment variables
+touch .env
+# Echo multiple environment variables to .env using a heredoc
+cat << EOF >> .env
+URL=$URL
+INDEX_NAME=$INDEX_NAME
+PC_API_KEY=$PC_API_KEY
+CHUNK_SIZE=$CHUNK_SIZE
+CHUNK_OVERLAP=$CHUNK_OVERLAP
+EOF
+
+# Load the environment variables
+export $(cat .env | xargs)
 
 # Check if the user has AWS access keys configured
 read -p "Do you have AWS access keys configured? (y/n) " aws_keys
@@ -63,8 +71,8 @@ else
     echo " "
 fi
 
-# Run the cleaner script to download the website and clean the text
-python3 cleaner.py "$url"
+# Run the get website script to download the website and clean the text
+python3 get_website.py
 exit_code=$?
 if [ $exit_code -eq 0 ]; then
     echo "Script ran successfully."
@@ -74,7 +82,7 @@ else
 fi
 
 # Run the chunker script to chunk the website text into smaller pieces
-python3 chunker.py "$chunk_size" "$chunk_overlap" "$url"
+python3 chunk_data.py
 exit_code=$?
 if [ $exit_code -eq 0 ]; then
     echo " "
@@ -86,11 +94,9 @@ else
 fi
 
 # Run the vectorizer script to vectorize the text chunks and load into Pinecone
-python3 vectorizer.py "$chunk_size" "$chunk_overlap" "$url"
+python3 vectorize_upsert.py 
 exit_code=$?
-if [ $exit_code -eq 0 ]; then
-    # Clean up local directory structure
-    rm -rf .env train.jsonl sitepages
+if [ $exit_code -eq 0 ]; then    
     echo "Vectorizer script ran successfully. We're done!"
     exit 0
 else

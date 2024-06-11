@@ -10,10 +10,10 @@ import json
 from pinecone import Pinecone
 
 # Load environment variables from .env file
-load_dotenv()
+#load_dotenv()
 
 MODEL_ID = "amazon.titan-embed-text-v2:0"
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_API_KEY = os.getenv("PC_API_KEY")
 INDEX_NAME = os.getenv("INDEX_NAME")
 cloud = 'aws'
 region = 'us-east-1'

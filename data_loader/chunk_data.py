@@ -7,8 +7,8 @@ import json
 import tiktoken
 
 # Variables
-csize = 100
-coverlap=10
+csize = os.getenv('CHUNK_SIZE', 400)
+coverlap = os.getenv('CHUNK_OVERLAP', 20)
 
 # The get_encoding function is called with the argument 'cl100k_base', 
 # which is  the name of a specific encoding scheme. This function is 
