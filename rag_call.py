@@ -9,6 +9,9 @@ from dotenv import load_dotenv
 import os, sys
 from langchain_aws import ChatBedrock
 
+# The question to pass the RAG call
+text = "What time is church?"
+
 # Load environment variables from .env file
 load_dotenv()
 
@@ -78,7 +81,7 @@ def generate_response(input_text, prompt, bedrock_llm):
         return None
 
 
-text = "What time is church?"
+
 output = generate_response(text, PROMPT, llm)
 
 if output:

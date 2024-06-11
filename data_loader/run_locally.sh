@@ -30,18 +30,18 @@ done
 echo " "
 
 # Get chunk size input from the user
-read -p "What chunk size would you like to use? (enter 1000 if uncertain) " CHUNK_SIZE
+read -p "What chunk size would you like to use? (enter 400 if uncertain) " CHUNK_SIZE
 while [ -z "$CHUNK_SIZE" ]; do
     echo "Please enter a chunk size."
-    read -p "What chunk size would you like to use? (enter 1000 if uncertain) " CHUNK_SIZE
+    read -p "What chunk size would you like to use? (enter 400 if uncertain) " CHUNK_SIZE
 done
 echo " "
 
 # Get chunk overlap input from the user
-read -p "What chunk overlap would you like to use? (enter 100 if uncertain) " CHUNK_OVERLAP
+read -p "What chunk overlap would you like to use? (enter 40 if uncertain) " CHUNK_OVERLAP
 while [ -z "$CHUNK_OVERLAP" ]; do
     echo "Please enter a chunk overlap."
-    read -p "What chunk overlap would you like to use? (enter 100 if uncertain) " CHUNK_OVERLAP
+    read -p "What chunk overlap would you like to use? (enter 40 if uncertain) " CHUNK_OVERLAP
 done
 echo " "
 

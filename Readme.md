@@ -1,63 +1,63 @@
 # Website Scraper, And PDF Chunker/Vectorizer for Pinecone DB
 
 This Python repository contains a set of scripts that allow you to scrape a website, clean the data, organize it, chunk it, and then vectorize it. The resulting vectors can be used for a variety of machine learning tasks, such as similarity search or clustering.
-Recently added a script to consume PDFs and add them to the training data as well.
+
+## Folders
+data_loader - Website scraping files
+pdf - Used for pdf-muncher.py (WIP)
+sitepages - Created by get_website.py in data_loader folder
 
 ## Files
-THESE FUNCTIONS CONSUME THE FILES THEY PROCESS (only in the websites and pdfs directories)
+pdf-muncher.py - WIP
+rag-call.py - The file that the eventual customer app API will hit to make the RAG call to the vector DB
+requirements.txt - dependencies
+run_locally - Bash script to run the scraping pipeline from local
 
-- `cleaner.py`: This script downloads a website using wget, reads and cleans the HTML files using Beautiful Soup, and saves the resulting text files in a specified directory.
-- `chunker.py`: This script splits the text files into smaller chunks, using a recursive character-based text splitter. The resulting chunks are saved in a JSONL file.
-- `vectorizor.py`: This script loads the JSONL file, creates embeddings using OpenAI's text-embedding-ada-002 model, and indexes the embeddings using Pinecone. This is the one script you need api keys to run
-- `pdf-muncher.py`: This will consume every PDF you put in the pdf-docs folder, and add it to the vectorized train.json
+
+In data_loader folder
+- `get_website.py`: This script downloads a website using wget, reads and cleans the HTML files using Beautiful Soup, and saves the resulting text files in a specified directory.
+- `chunk_data.py`: This script splits the text files into smaller chunks, using a recursive character-based text splitter. The resulting chunks are saved in a JSONL file.
+- `vectorize_upsert.py`: This script loads the JSONL file, creates embeddings using Amazon Titan's amazon.titan-embed-text-v2:0 model, and indexes the embeddings using Pinecone. This is the one script you need api keys to run
+- `pdf-muncher.py` (WIP): This will consume every PDF you put in the pdf-docs folder, and add it to the vectorized train.json
 
 ## Requirements
 
-- Python 3.x
-- OpenAI API key
-- Pinecone API key
-- `bs4` Python library
-- `jsonlines` Python library
-- `tqdm` Python library
-- `tiktoken` Python library
-- `pinecone-client` Python library
+- boto3==1.34.119
+- botocore==1.34.119
+- bs4==0.0.2
+- chardet==5.2.0
+- httplib2==0.22.0
+- jsonlines==4.0.0
+- langchain==0.2.2
+- langchain-aws==0.1.6
+- langchain-community==0.2.2
+- langchain-core==0.2.4
+- langchain-pinecone==0.1.1
+- langchain-text-splitters==0.2.1
+- lxml==5.2.2
+- pinecone==4.0.0
+- pinecone-client==3.2.2
+- python-dotenv==1.0.1
+- requests==2.32.3
+- tiktoken==0.7.0
+- tqdm==4.66.4
+- wget==3.2
 
 ## Usage
 
-We choose a site to rip
-![Step 1](data/pdf-1.png)
+Step 1 run /data_loader/run-locally.sh and follow prompts
+Pre-requisites:
+### URL=<the URL to rip>
+### INDEX_NAME=<Pincone index name (must be existing)>
+### PC_API_KEY=<Pinecone API Key (created when pinecone project is created)>
+### CHUNK_SIZE=<data chunk size (choose 400 if uncertain)>
+### CHUNK_OVERLAP=<chunk ovelap size (choose 40 if uncertain)>
 
-We see our 'website' folder filling up with files
-![Step 2](data/pdf-2.png)
+This will run the python files in this order
+get_website - Scrap website and extract only text
+chunk_data - chunk data and prep for vector db
+vectorize_upsert - Vectorize and loads vectors into pinecone vector db
 
-We run the cleaner script
-![Step 3](data/pdf-3.png)
-
-Files are normalized and cleaned up
-![Step 4](data/pdf-4.png)
-
-Now we run chunker, and we can see our website files are now chunked and vectorized
-![Step 5](data/pdf-5.png)
-
-Now we run our PDF muncher, and it will consume the Dungeons and Dragons monster manual pdf in our pfds folder. 
-![Step 6](data/pdf-muncher.png)
-
-Finally, we can see our vectorized training data contains the DnD content aswell!
-![Step 7](data/pdf-6.png)
-
-Now we simply run vectorizor and our Pinecone DB will get updated.
-
-1. Clone the repository and navigate to the project directory.
-2. Install the required Python libraries using `pip install -r requirements.txt`.
-3. Set up your OpenAI and Pinecone API keys.
-4: Download the website - copy and run the wget command: 
-  `wget -r -np -nd -A.html,.txt,.tmp -P websites https://www.linkedin.com/in/sean-stobo/`
-5. Run `python cleaner.py` to download and clean the website data. - This will break down the directory structure into on list of html docs.
-
-6. Run `python chunker.py` to split the text files into smaller chunks. This outputs train.json in the root
-
-6.5. Run 'pdf-muncher.py' to convert the contents of the '/pdfs/' folder to serialized train.jsonl file in root. 
-
-7. Run `python vectorizor.py` to create embeddings and index them using Pinecone. This will vectorize train.json
-
-Note: Before running `vectorizor.py`, make sure to set up a Pinecone database with 1536 dimensions.
+Step 2
+Now we simply run rag_call.py and update line 13 with the question we want to pass the RAG call. 
+### Pre-requisites = AWS Keys configured with Bedrock access
